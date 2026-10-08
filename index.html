@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRB Residency | Premium Hotel Stay</title>
+<meta name="description" content="TRB Residency offers comfortable, elegant rooms, warm hospitality and easy WhatsApp booking. Book your stay today.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#about">Skip to content</a>
+
+<header class="nav" id="nav">
+	<a class="logo" href="#home">
+    <img src="image/logo-trb.png" alt="TRB Residency">
+  </a>
+
+  <nav id="menu" aria-label="Main">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#rooms">Rooms</a>
+    <a href="#book">Book Now</a>
+    <a href="#tourist">Tourist Places</a>
+    <a href="#blog">Blog</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <a class="btn gold nav-cta" href="#book">Book Now</a>
+
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</header>
+
+<main>
+<section class="hero" id="home" aria-label="Welcome">
+  <div class="slides">
+    <div class="slide on"><img src="image/destop-skg.png" alt="TRB Residency entrance"></div>
+    <div class="slide"><img src="image/skg-bg.png" alt="Premium hotel room"></div>
+    <div class="slide"><img src="image/image-1.png" alt="Premium hotel room"></div>
+    <div class="slide"><img src="image/image-2.png" alt="Elegant lobby and reception"></div>
+    <div class="slide"><img src="image/Sunlit Modern Corridor with Palm Views.png" alt="Dining and hospitality area"></div>
+  </div>
+  <div class="hero-text">
+    <p class="hero-name">TRB RESIDENCY</p>
+    <h1>Stay in Comfort. Experience Elegance.</h1>
+    <p>A calm, beautifully kept hotel where every room, meal and welcome is looked after for you.</p>
+    <div class="row"><a class="btn gold" href="#book">Book Now</a><a class="btn ghost" href="#rooms">Explore Rooms</a></div>
+  </div>
+  <button class="arrow prev" aria-label="Previous slide">&#8249;</button>
+  <button class="arrow next" aria-label="Next slide">&#8250;</button>
+  <div class="dots" id="dots"></div>
+</section>
+
+<section class="sec split" id="about">
+  <div class="about-img"><img src="image/Welcoming Kanyakumari Reception Lounge.png" alt="Inside TRB Residency" loading="lazy"></div>
+  <div>
+    <h2>A hotel that feels like a welcome</h2>
+    <p>TRB Residency pairs modern comfort with warm, attentive hospitality. Our rooms are clean and quietly stylish, our team knows your name, and everything you need is close by.</p>
+    <ul class="ticks">
+      <li>Comfortable accommodation for couples, families and business guests</li>
+      <li>Clean, modern facilities maintained daily</li>
+      <li>Convenient location near key attractions</li>
+      <li>Guest-focused service from check-in to check-out</li>
+    </ul>
+    <a class="btn dark" href="#contact">Talk to our team</a>
+  </div>
+</section>
+
+<section class="sec tint" id="rooms">
+  <div class="head"><h2>Rooms and suites</h2><p>Choose the room that suits your stay.</p></div>
+  <div class="grid" id="roomGrid"></div>
+  <h3 class="sub">Room gallery</h3>
+  <div class="masonry" id="gallery"></div>
+</section>
+
+<section class="sec" id="book">
+  <div class="head"><h2>Book your stay</h2><p>The fastest way to reserve is on WhatsApp. Share your dates and we will confirm availability.</p></div>
+  <div class="book-wrap">
+    <form class="card" id="bookForm">
+      <label>Check-in<input type="date" name="in" required></label>
+      <label>Check-out<input type="date" name="out" required></label>
+      <label>Guests<input type="number" name="guests" min="1" value="2" required></label>
+      <label>Room preference<select name="room" id="roomSel"></select></label>
+      <label class="full">Special requests<textarea name="req" rows="3"></textarea></label>
+      <button class="btn wa full" type="submit">Book via WhatsApp</button>
+      <p class="note full">WhatsApp: <strong data-cfg="whatsappDisplay">8903228888</strong></p>
+    </form>
+    <div class="card pay" id="pay">
+      <h3>Make your payment</h3>
+      <p class="muted">Scan &amp; pay</p>
+      <div class="qr"><img src="image/QR Code with Colorful Center Logo.png" alt="UPI payment QR code" id="qrImg"><span>[QR CODE]</span></div>
+      <p class="muted">UPI ID</p>
+      <p class="upi" data-cfg="upi">[UPI ID]</p>
+    <button class="btn dark" id="copyUpi" type="button">
+  Copy UPI ID
+</button>
+
+<a class="btn gold" id="upiPayBtn" href="#">
+  Pay with UPI App
+</a>
+		<span class="copied" id="copied" role="status" aria-live="polite"></span>
+
+<a class="btn wa" id="payWa" href="#" target="_blank" rel="noopener">
+  Confirm payment on WhatsApp
+</a>
+      <p class="note">Please confirm your booking and the payment details with us on WhatsApp before you transfer any money.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec tint" id="tourist">
+  <div class="head"><h2>Tourist places nearby</h2><p>Attractions within easy reach of TRB Residency.</p></div>
+  <div class="grid" id="placeGrid"></div>
+</section>
+
+<section class="sec" id="blog">
+  <div class="head"><h2>Travel journal</h2><p>Guides and tips for a better stay.</p></div>
+  <div class="grid" id="blogGrid"></div>
+</section>
+
+<section class="sec dark-sec" id="contact">
+  <div class="head"><h2>Get in touch</h2><p>We reply quickly, usually within the hour.</p></div>
+  <div class="contact-wrap">
+    <div>
+      <ul class="info">
+        <li><b>Address</b><span data-cfg="address">[HOTEL ADDRESS]</span></li>
+        <li><b>Phone</b><a data-cfg-tel href="#"><span data-cfg="phone">[PHONE NUMBER]</span></a></li>
+        <li><b>WhatsApp</b><span data-cfg="whatsappDisplay">[WHATSAPP NUMBER]</span></li>
+        <li><b>Email</b><a data-cfg-mail href="#"><span data-cfg="email">[EMAIL]</span></a></li>
+        <li><b>Hours</b><span>Front desk open 24 hours. Check-in 12:00, check-out 11:00.</span></li>
+      </ul>
+      <a class="btn wa big" data-wa href="#" target="_blank" rel="noopener">Chat with us on WhatsApp</a>
+      <p><a class="maplink" data-cfg-map href="#" target="_blank" rel="noopener">Open in Google Maps [GOOGLE MAPS LINK]</a></p>
+    </div>
+    <form class="card light" id="contactForm">
+      <label>Name<input name="name" required></label>
+      <label>Phone or email<input name="contact" required></label>
+      <label>Message<textarea name="msg" rows="4" required></textarea></label>
+      <button class="btn gold" type="submit">Send message</button>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="foot-grid">
+    <div><p class="logo">TRB RESIDENCY</p><p>Comfortable rooms, thoughtful service and an elegant stay.</p>
+      <p class="social"><a href="#" aria-label="Facebook">Facebook</a> <a href="#" aria-label="Instagram">Instagram</a> <a href="#" aria-label="YouTube">YouTube</a></p></div>
+    <div><h4>Quick links</h4><a href="#rooms">Rooms</a><a href="#tourist">Tourist Places</a><a href="#blog">Blog</a><a href="#contact">Contact</a></div>
+    <div><h4>Reach us</h4><a data-wa href="#" target="_blank" rel="noopener">WhatsApp</a><span data-cfg="phone">[PHONE NUMBER]</span><span data-cfg="email">[EMAIL]</span><span data-cfg="address">[HOTEL ADDRESS]</span></div>
+  </div>
+  <p class="copy">&copy; <span id="yr"></span> TRB Residency. All rights reserved.</p>
+</footer>
+
+<a class="float-wa" data-wa href="#" target="_blank" rel="noopener" aria-label="Book or enquire on WhatsApp">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M16 3a13 13 0 0 0-11 19.8L3 29l6.4-2A13 13 0 1 0 16 3zm0 23.7a10.7 10.7 0 0 1-5.4-1.5l-.4-.2-3.8 1.2 1.2-3.7-.3-.4A10.7 10.7 0 1 1 16 26.700zm5.900-8c-.3-.2-1.900-.9-2.200-1s-.5-.2-.7.200-.8 1-1 1.200-.4.200-.7 0a8.700 8.700 0 0 1-4.300-3.800c-.3-.6.300-.5.900-1.700.1-.2 0-.4 0-.5l-1-2.300c-.2-.6-.5-.5-.7-.5h-.6a1.200 1.200 0 0 0-.9.400 3.800 3.800 0 0 0-1.200 2.800 6.600 6.600 0 0 0 1.400 3.500 15 15 0 0 0 5.800 5.100c2.100.9 2.900 1 3.900.8a3.300 3.300 0 0 0 2.200-1.600 2.700 2.700 0 0 0 .2-1.600c-.1-.1-.3-.2-.6-.4z"/></svg>
+  <span class="tip">Book / Enquire on WhatsApp</span>
+</a>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+  <button class="lb-close" aria-label="Close">&times;</button>
+  <button class="arrow prev" aria-label="Previous image">&#8249;</button>
+  <img id="lbImg" alt="">
+  <button class="arrow next" aria-label="Next image">&#8250;</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
