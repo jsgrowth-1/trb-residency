@@ -5,7 +5,7 @@ const CONFIG = {
   phone: "+91 8903228888",            // e.g. "+91 98765 43210"
   email: "[EMAIL]",
   address: "5/2A-6MAIN ROAD, KANYAKUMARI",
-  upi: "josejo4086@okaxis",                    // e.g. "trbresidency@upi"
+  upi: "9486741399@ybl",                    // e.g. "trbresidency@upi"
   mapsLink:  "https://share.google/4wNvzQgiV8j2HxlIr",                       // paste your Google Maps share link
 };
 
