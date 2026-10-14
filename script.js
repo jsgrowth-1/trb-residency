@@ -207,17 +207,29 @@ $("#copyUpi").onclick = async () => {
   setTimeout(() => (note.textContent = ""), 2200);
 };
 /* UPI payment app */
-const upiPayBtn = $("#upiPayBtn");
+const upiPayBtn = document.querySelector("#upiPayBtn");
 
 if (upiPayBtn) {
   const upiId = CONFIG.upi;
+  const payeeName = "TRB Residency";
 
-  const upiUrl =
-    `upi://pay?pa=${encodeURIComponent(upiId)}` +
-    `&pn=${encodeURIComponent("TRB Residency")}` +
-    `&cu=INR`;
+  const upiUrl = new URLSearchParams({
+    pa: upiId,
+    pn: payeeName,
+    cu: "INR"
+  });
 
-  upiPayBtn.href = upiUrl;
+  upiPayBtn.href = `upi://pay?${upiUrl.toString()}`;
+  upiPayBtn.setAttribute("aria-label", "Pay TRB Residency using a UPI app");
+
+  upiPayBtn.addEventListener("click", function (event) {
+    if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      event.preventDefault();
+      alert(
+        "Please open this website on your mobile phone, or scan the UPI QR code using your UPI app."
+      );
+    }
+  });
 }
 
 /* contact form -> WhatsApp */
