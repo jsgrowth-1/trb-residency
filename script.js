@@ -145,28 +145,28 @@ async function loadRoomsFromSupabase() {
       return;
     }
 
-    // Match database records to your existing room details.
-    const websiteRooms = data
-      .filter((dbRoom) => dbRoom.available)
-      .map((dbRoom) => {
-        const existing = ROOMS.find(
-          (room) => room.name === dbRoom.name
-        );
+    // Keep every room visible, including rooms marked unavailable.
+    const websiteRooms = data.map((dbRoom) => {
+      const existing = ROOMS.find(
+        (room) => room.name === dbRoom.name
+      );
 
-        return {
-          name: dbRoom.name,
-          img: existing?.img || dbRoom.image || "",
-          desc: existing?.desc || dbRoom.description || "",
-          amenities: Array.isArray(dbRoom.amenities)
-            ? dbRoom.amenities
-            : existing?.amenities || [],
-          guests: existing?.guests || `${dbRoom.max_guests} guests`,
-          price: Number(dbRoom.price)
-        };
-      });
+      return {
+        id: dbRoom.id,
+        name: dbRoom.name,
+        img: existing?.img || dbRoom.image || "",
+        desc: existing?.desc || dbRoom.description || "",
+        amenities: Array.isArray(dbRoom.amenities)
+          ? dbRoom.amenities
+          : existing?.amenities || [],
+        guests: existing?.guests || `${dbRoom.max_guests} guests`,
+        price: Number(dbRoom.price),
+        available: dbRoom.available === true
+      };
+    });
 
     if (websiteRooms.length === 0) {
-      roomGrid.innerHTML = "<p>No rooms are currently available.</p>";
+      roomGrid.innerHTML = "<p>No rooms are currently listed.</p>";
       roomSelect.innerHTML = '<option value="">Any room</option>';
       return;
     }
@@ -194,23 +194,30 @@ async function loadRoomsFromSupabase() {
 
           <p class="meta">Sleeps ${r.guests}</p>
           <p class="price">${formatPrice(r.price)}</p>
+          <p class="meta room-availability" aria-live="polite">
+            ${r.available ? "Available" : "Not Available"}
+          </p>
 
           <div class="row">
             <a class="btn outline" href="${r.img}" data-view>
               View Room
             </a>
 
-            <a class="btn gold" href="#book" data-room="${r.name}">
-              Book Now
-            </a>
+            ${
+              r.available
+                ? `<a class="btn gold" href="#book" data-room="${r.name}">Book Now</a>`
+                : `<span class="btn gold" aria-disabled="true" style="opacity:.6;cursor:not-allowed;pointer-events:none">Not Available</span>`
+            }
           </div>
         </div>
       </article>
     `).join("");
 
+    // Only let guests select rooms that are currently available.
+    const availableRooms = websiteRooms.filter((r) => r.available);
     roomSelect.innerHTML =
       '<option value="">Any room</option>' +
-      websiteRooms.map(
+      availableRooms.map(
         (r) => `<option value="${r.name}">${r.name}</option>`
       ).join("");
 
@@ -317,7 +324,6 @@ dotBtns.forEach((d, i) => (d.onclick = () => { show(i); play(); }));
 show(0); play();
 
 /* booking form -> WhatsApp */
-$$("[data-room]").forEach((a) => a.addEventListener("click", () => ($("#roomSel").value = a.dataset.room)));
 $("#bookForm").onsubmit = (e) => {
   e.preventDefault();
   const f = Object.fromEntries(new FormData(e.target));
