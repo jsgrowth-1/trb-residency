@@ -126,15 +126,33 @@
         event.preventDefault();
         const available = availabilitySelect.value === "true";
         statusSave.disabled = true; statusSave.textContent = "Saving…"; clearStatus();
-        const {error: updateError} = await db.from("rooms").update({available}).eq("id", room.id);
-        statusSave.disabled = false; statusSave.textContent = "Save status";
-        if (updateError) {
-          setStatus("Could not update status for " + room.name + ": " + updateError.message + (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
-          return;
+        try {
+          const {data: updatedRows, error: updateError} = await db
+            .from("rooms")
+            .update({available})
+            .eq("id", room.id)
+            .select("id, available");
+
+          if (updateError) {
+            setStatus("Could not update status for " + room.name + ": " + updateError.message +
+              (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
+            return;
+          }
+          if (!updatedRows || updatedRows.length === 0) {
+            setStatus("No database row was updated for " + room.name +
+              ". Check UPDATE permission and the rooms table RLS policy.", "error");
+            return;
+          }
+
+          room.available = updatedRows[0].available;
+          current.textContent = room.available ? "Available" : "Not available";
+          setStatus(room.name + " status saved successfully.", "ok");
+        } catch (err) {
+          setStatus("Unexpected status-save error: " + (err.message || err), "error");
+        } finally {
+          statusSave.disabled = false;
+          statusSave.textContent = "Save status";
         }
-        room.available = available;
-        current.textContent = available ? "Available" : "Not available";
-        setStatus(room.name + " marked " + (available ? "Available" : "Not available") + ".", "ok");
       });
 
       const form = document.createElement("form");
@@ -157,14 +175,36 @@
           setStatus("Enter a valid whole-number price (₹0 or more).", "error"); return;
         }
         save.disabled = true; save.textContent = "Saving…"; clearStatus();
-        const {error: updateError} = await db.from("rooms").update({price}).eq("id", room.id);
-        save.disabled = false; save.textContent = "Save";
-        if (updateError) {
-          setStatus("Could not save " + room.name + ": " + updateError.message + (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
-          return;
+        try {
+          const {data: updatedRows, error: updateError} = await db
+            .from("rooms")
+            .update({price})
+            .eq("id", room.id)
+            .select("id, price");
+
+          if (updateError) {
+            setStatus("Could not save " + room.name + ": " + updateError.message +
+              (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
+            return;
+          }
+          if (!updatedRows || updatedRows.length === 0) {
+            setStatus("No database row was updated for " + room.name +
+              ". Check UPDATE permission and the rooms table RLS policy.", "error");
+            return;
+          }
+
+          room.price = Number(updatedRows[0].price);
+          input.value = room.price;
+          setStatus(room.name + " price saved as " + money(room.price) + ".", "ok");
+          current.textContent = room.available
+            ? "Available · " + money(room.price)
+            : "Not available · " + money(room.price);
+        } catch (err) {
+          setStatus("Unexpected price-save error: " + (err.message || err), "error");
+        } finally {
+          save.disabled = false;
+          save.textContent = "Save";
         }
-        setStatus(room.name + " price saved as " + money(price) + ".", "ok");
-        current.textContent = room.available ? "Available · " + money(price) : "Unavailable · " + money(price);
       });
       card.append(top, form, availabilityForm);
       $("roomsList").appendChild(card);
