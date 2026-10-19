@@ -386,16 +386,7 @@ addEventListener("keydown", (e) => {
 });
 
 
-/* ============ EDIT YOUR DETAILS HERE ============ */
-const CONFIG = {
-  whatsapp: "918903228888",                       // digits only with country code, e.g. "919876543210"
-  whatsappDisplay: "+91 8903228888",
-  phone: "+91 8903228888",            // e.g. "+91 98765 43210"
-  email: "[EMAIL]",
-  address: "5/2A-6MAIN ROAD, KANYAKUMARI",
-  upi: "6380887715-1@okbizaxis",                    // e.g. "trbresidency@upi"
-  mapsLink:  "https://share.google/4wNvzQgiV8j2HxlIr",                       // paste your Google Maps share link
-};
+
 
 const ROOMS = [
   { name: "Deluxe Room", img: "image/Minimalist Bedroom with Window and Fan.png", desc: "A bright, quiet room with a plush bed and a work desk.", amenities: ["Free Wi-Fi", "NON-AC", "Smart TV"], guests: "2 guests, 1 child", price: "[1100]" },
