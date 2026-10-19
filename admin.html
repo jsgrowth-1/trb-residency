@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5efe3">
+  <title>TRB Residency | Room Price Admin</title>
+  <style>
+    :root{--bg:#f5efe3;--card:#fffdf8;--ink:#2b2621;--gold:#b4914a;--line:#e4d8c2;--muted:#74695d;--green:#16794b;--red:#b42318}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    header{background:#2b2621;color:#fff;padding:18px 16px}
+    .wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+    header .wrap{padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    h1{font-size:1.25rem;margin:0} h2{font-size:1.35rem;margin:0 0 8px}
+    .sub{color:#d9c9a8;font-size:.9rem;margin:2px 0 0}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 6px 20px #2b26210a}
+    label{display:block;font-weight:650;margin:12px 0 6px}
+    input{width:100%;font:inherit;padding:12px;border:1px solid #cdbd9f;border-radius:9px;background:#fff}
+    button{font:inherit;font-weight:650;border:0;border-radius:9px;padding:12px 16px;background:var(--gold);color:white;cursor:pointer}
+    button:disabled{opacity:.55;cursor:wait}
+    .secondary{background:#2b2621}.danger{background:#62564b}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .row button{margin-top:14px}
+    .room{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+    .room-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .room h3{margin:0;font-size:1.05rem}
+    .status{margin-top:14px;padding:11px 12px;border-radius:9px;background:#eee7da;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+    .status.error{background:#fff0ef;color:var(--red)}.status.ok{background:#eaf7ef;color:var(--green)}
+    .muted{color:var(--muted);font-size:.9rem}
+    [hidden]{display:none!important}
+    .price-line{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:end}
+    @media(max-width:480px){.card{padding:16px}.price-line{grid-template-columns:1fr 105px}.room-top{align-items:flex-start}}
+  </style>
+</head>
+<body>
+<header><div class="wrap"><div><h1>TRB Residency</h1><p class="sub">Room price administration</p></div><button id="logoutBtn" class="danger" hidden>Log out</button></div></header>
+<main class="wrap">
+  <section class="card" id="loginPanel">
+    <h2>Admin login</h2>
+    <p class="muted">Sign in with the admin email/password</p>
+    <form id="loginForm">
+      <label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+      <div class="row"><button id="loginBtn" type="submit">Sign in</button></div>
+    </form>
+  </section>
+
+  <section class="card" id="adminPanel" hidden>
+    <h2>Room prices</h2>
+    <p class="muted">Edit the price in rupees and tap Save. The public website reads prices from the same Supabase table.</p>
+    <div id="roomsList"></div>
+    <button id="refreshBtn" class="secondary" type="button">Refresh rooms</button>
+  </section>
+  <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+  <p class="muted">Admin page. Keep this page private and never place a Supabase secret/service-role key in browser code.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // This is the public/publishable key. It is intended for browser use.
+  const SUPABASE_URL = "https://bnbeubivdpoewuiodpku.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zOnVkRxm6h0X9O3AEz_Xuw_hsIzi-Aj";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  const $ = (id) => document.getElementById(id);
+  const statusBox = $("status");
+  function setStatus(message, kind = "") {
+    statusBox.textContent = message;
+    statusBox.className = "status" + (kind ? " " + kind : "");
+    statusBox.hidden = false;
+  }
+  function clearStatus(){ statusBox.hidden = true; statusBox.textContent = ""; }
+  function showLoggedIn(isIn) {
+    $("loginPanel").hidden = isIn;
+    $("adminPanel").hidden = !isIn;
+    $("logoutBtn").hidden = !isIn;
+  }
+  const money = (n) => new Intl.NumberFormat("en-IN", {style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
+
+  async function loadRooms() {
+    clearStatus();
+    $("roomsList").textContent = "Loading rooms…";
+    const {data, error} = await db.from("rooms").select("id,name,price,available").order("id");
+    if (error) {
+      $("roomsList").textContent = "";
+      setStatus("Could not load rooms: " + error.message + (error.code ? " (code " + error.code + ")" : ""), "error");
+      return;
+    }
+    if (!data || data.length === 0) {
+      $("roomsList").textContent = "No rooms found in public.rooms.";
+      return;
+    }
+    $("roomsList").innerHTML = "";
+    data.forEach((room) => {
+      const card = document.createElement("div");
+      card.className = "room";
+      const top = document.createElement("div");
+      top.className = "room-top";
+      const name = document.createElement("h3");
+      name.textContent = room.name;
+      const current = document.createElement("span");
+      current.className = "muted";
+      current.textContent = room.available ? "Available" : "Unavailable";
+      top.append(name, current);
+      const form = document.createElement("form");
+      form.className = "price-line";
+      const field = document.createElement("div");
+      const label = document.createElement("label");
+      label.textContent = "Price (₹)";
+      const input = document.createElement("input");
+      input.type = "number"; input.min = "0"; input.step = "1"; input.required = true;
+      input.inputMode = "numeric"; input.value = Number(room.price);
+      input.setAttribute("aria-label", room.name + " price in rupees");
+      label.appendChild(input); field.appendChild(label);
+      const save = document.createElement("button");
+      save.type = "submit"; save.textContent = "Save";
+      form.append(field, save);
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const price = Number(input.value);
+        if (!Number.isFinite(price) || price < 0 || !Number.isInteger(price)) {
+          setStatus("Enter a valid whole-number price (₹0 or more).", "error"); return;
+        }
+        save.disabled = true; save.textContent = "Saving…"; clearStatus();
+        const {error: updateError} = await db.from("rooms").update({price}).eq("id", room.id);
+        save.disabled = false; save.textContent = "Save";
+        if (updateError) {
+          setStatus("Could not save " + room.name + ": " + updateError.message + (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
+          return;
+        }
+        setStatus(room.name + " price saved as " + money(price) + ".", "ok");
+        current.textContent = room.available ? "Available · " + money(price) : "Unavailable · " + money(price);
+      });
+      card.append(top, form);
+      $("roomsList").appendChild(card);
+    });
+  }
+
+  $("loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault(); clearStatus();
+    $("loginBtn").disabled = true; $("loginBtn").textContent = "Signing in…";
+    const {error} = await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+    $("loginBtn").disabled = false; $("loginBtn").textContent = "Sign in";
+    if (error) { setStatus("Login failed: " + error.message, "error"); return; }
+    showLoggedIn(true); await loadRooms();
+  });
+  $("logoutBtn").addEventListener("click", async () => {
+    await db.auth.signOut(); showLoggedIn(false); $("roomsList").textContent = ""; setStatus("You have logged out.");
+  });
+  $("refreshBtn").addEventListener("click", loadRooms);
+
+  (async function init(){
+    const {data:{session}, error} = await db.auth.getSession();
+    if (error) { setStatus("Could not check login: " + error.message, "error"); return; }
+    showLoggedIn(!!session);
+    if (session) await loadRooms();
+  })();
+</script>
+</body>
+</html>
