@@ -373,3 +373,18 @@ input,select,textarea{font:inherit;color:var(--char);padding:.7rem .8rem;border:
 }
 @media(max-width:520px){.card{grid-template-columns:1fr}.tip{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Admin navigation link */
+.admin-link {
+    color: #b4914a;
+    font-weight: 700;
+}
+
+/* Keep Admin visible in the mobile menu */
+@media (max-width: 768px) {
+    #menu .admin-link {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+    }
+}
