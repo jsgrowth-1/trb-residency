@@ -30,7 +30,9 @@
     .muted{color:var(--muted);font-size:.9rem}
     [hidden]{display:none!important}
     .price-line{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:end}
-    @media(max-width:480px){.card{padding:16px}.price-line{grid-template-columns:1fr 105px}.room-top{align-items:flex-start}}
+    .availability-line{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:end;margin-top:10px}
+    select{width:100%;font:inherit;padding:12px;border:1px solid #cdbd9f;border-radius:9px;background:#fff}
+    @media(max-width:480px){.card{padding:16px}.price-line,.availability-line{grid-template-columns:1fr 105px}.room-top{align-items:flex-start}}
   </style>
 </head>
 <body>
@@ -38,7 +40,7 @@
 <main class="wrap">
   <section class="card" id="loginPanel">
     <h2>Admin login</h2>
-    <p class="muted">Sign in with the admin email/password</p>
+    <p class="muted">Sign in with the admin email/password created in Supabase.</p>
     <form id="loginForm">
       <label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required>
       <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
@@ -48,7 +50,7 @@
 
   <section class="card" id="adminPanel" hidden>
     <h2>Room prices</h2>
-    <p class="muted">Edit the price in rupees and tap Save. The public website reads prices from the same Supabase table.</p>
+    <p class="muted">Edit the price and availability, then save each change. The public website reads from the same Supabase table.</p>
     <div id="roomsList"></div>
     <button id="refreshBtn" class="secondary" type="button">Refresh rooms</button>
   </section>
@@ -103,6 +105,38 @@
       current.className = "muted";
       current.textContent = room.available ? "Available" : "Unavailable";
       top.append(name, current);
+      const availabilityForm = document.createElement("form");
+      availabilityForm.className = "availability-line";
+      const availabilityField = document.createElement("div");
+      const availabilityLabel = document.createElement("label");
+      availabilityLabel.textContent = "Room status";
+      const availabilitySelect = document.createElement("select");
+      availabilitySelect.setAttribute("aria-label", room.name + " availability");
+      const availableOption = document.createElement("option");
+      availableOption.value = "true"; availableOption.textContent = "Available";
+      const unavailableOption = document.createElement("option");
+      unavailableOption.value = "false"; unavailableOption.textContent = "Not available";
+      availabilitySelect.append(availableOption, unavailableOption);
+      availabilitySelect.value = String(Boolean(room.available));
+      availabilityLabel.appendChild(availabilitySelect); availabilityField.appendChild(availabilityLabel);
+      const statusSave = document.createElement("button");
+      statusSave.type = "submit"; statusSave.textContent = "Save status";
+      availabilityForm.append(availabilityField, statusSave);
+      availabilityForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const available = availabilitySelect.value === "true";
+        statusSave.disabled = true; statusSave.textContent = "Saving…"; clearStatus();
+        const {error: updateError} = await db.from("rooms").update({available}).eq("id", room.id);
+        statusSave.disabled = false; statusSave.textContent = "Save status";
+        if (updateError) {
+          setStatus("Could not update status for " + room.name + ": " + updateError.message + (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
+          return;
+        }
+        room.available = available;
+        current.textContent = available ? "Available" : "Not available";
+        setStatus(room.name + " marked " + (available ? "Available" : "Not available") + ".", "ok");
+      });
+
       const form = document.createElement("form");
       form.className = "price-line";
       const field = document.createElement("div");
@@ -132,7 +166,7 @@
         setStatus(room.name + " price saved as " + money(price) + ".", "ok");
         current.textContent = room.available ? "Available · " + money(price) : "Unavailable · " + money(price);
       });
-      card.append(top, form);
+      card.append(top, form, availabilityForm);
       $("roomsList").appendChild(card);
     });
   }
