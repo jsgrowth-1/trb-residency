@@ -121,15 +121,131 @@ $$("[data-cfg-mail]").forEach((a) => (a.href = "mailto:" + CONFIG.email));
 $$("[data-cfg-map]").forEach((a) => { if (CONFIG.mapsLink) { a.href = CONFIG.mapsLink; a.textContent = "Open in Google Maps"; } });
 $("#yr").textContent = new Date().getFullYear();
 
-/* render rooms, gallery, places, blog */
-$("#roomGrid").innerHTML = ROOMS.map((r) => `
-  <article class="tile"><div class="ph">${img(r.img, r.name)}</div><div class="bd">
-    <h3>${r.name}</h3><p>${r.desc}</p>
-    <div class="chips">${r.amenities.map((a) => `<span>${a}</span>`).join("")}</div>
-    <p class="meta">Sleeps ${r.guests}</p><p class="price">${r.price}</p>
-    <div class="row"><a class="btn outline" href="${r.img}" data-view>View Room</a>
-    <a class="btn gold" href="#book" data-room="${r.name}">Book Now</a></div></div></article>`).join("");
-$("#roomSel").innerHTML = '<option value="">Any room</option>' + ROOMS.map((r) => `<option>${r.name}</option>`).join("");
+/* Load room prices from Supabase */
+
+async function loadRoomsFromSupabase() {
+  const roomGrid = $("#roomGrid");
+  const roomSelect = $("#roomSel");
+
+  if (!roomGrid || !roomSelect) return;
+
+  roomGrid.innerHTML = "<p>Loading room prices...</p>";
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("rooms")
+      .select("id, name, image, description, amenities, max_guests, price, available")
+      .order("id");
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      roomGrid.innerHTML = "<p>No rooms are currently listed.</p>";
+      roomSelect.innerHTML = '<option value="">Any room</option>';
+      return;
+    }
+
+    // Match database records to your existing room details.
+    const websiteRooms = data
+      .filter((dbRoom) => dbRoom.available)
+      .map((dbRoom) => {
+        const existing = ROOMS.find(
+          (room) => room.name === dbRoom.name
+        );
+
+        return {
+          name: dbRoom.name,
+          img: existing?.img || dbRoom.image || "",
+          desc: existing?.desc || dbRoom.description || "",
+          amenities: Array.isArray(dbRoom.amenities)
+            ? dbRoom.amenities
+            : existing?.amenities || [],
+          guests: existing?.guests || `${dbRoom.max_guests} guests`,
+          price: Number(dbRoom.price)
+        };
+      });
+
+    if (websiteRooms.length === 0) {
+      roomGrid.innerHTML = "<p>No rooms are currently available.</p>";
+      roomSelect.innerHTML = '<option value="">Any room</option>';
+      return;
+    }
+
+    const formatPrice = (price) =>
+      new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0
+      }).format(price);
+
+    roomGrid.innerHTML = websiteRooms.map((r) => `
+      <article class="tile">
+        <div class="ph">
+          ${img(r.img, r.name)}
+        </div>
+
+        <div class="bd">
+          <h3>${r.name}</h3>
+          <p>${r.desc}</p>
+
+          <div class="chips">
+            ${r.amenities.map((a) => `<span>${a}</span>`).join("")}
+          </div>
+
+          <p class="meta">Sleeps ${r.guests}</p>
+          <p class="price">${formatPrice(r.price)}</p>
+
+          <div class="row">
+            <a class="btn outline" href="${r.img}" data-view>
+              View Room
+            </a>
+
+            <a class="btn gold" href="#book" data-room="${r.name}">
+              Book Now
+            </a>
+          </div>
+        </div>
+      </article>
+    `).join("");
+
+    roomSelect.innerHTML =
+      '<option value="">Any room</option>' +
+      websiteRooms.map(
+        (r) => `<option value="${r.name}">${r.name}</option>`
+      ).join("");
+
+    // Restore room-view lightbox handlers for the newly rendered cards.
+    $$("[data-view]").forEach((a) => {
+      a.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        const lightbox = $("#lightbox");
+        const lightboxImage = $("#lbImg");
+
+        lightboxImage.src = a.getAttribute("href");
+        lightboxImage.alt = "Room photo";
+        lightbox.hidden = false;
+      });
+    });
+
+    // Restore the booking room selection handlers.
+    $$("[data-room]").forEach((a) => {
+      a.addEventListener("click", () => {
+        roomSelect.value = a.dataset.room;
+      });
+    });
+
+    console.log("Room prices loaded successfully from Supabase.");
+
+  } catch (error) {
+    console.error("Unable to load room prices:", error);
+
+    roomGrid.innerHTML =
+      "<p>Room prices could not be loaded. Please try again later.</p>";
+  }
+}
+
+loadRoomsFromSupabase();
 $("#gallery").innerHTML = GALLERY.map((g, i) => `<button data-i="${i}" aria-label="Open ${g[1]}">${img(g[0], g[1])}</button>`).join("");
 $("#placeGrid").innerHTML = PLACES.map((p) => {
 
