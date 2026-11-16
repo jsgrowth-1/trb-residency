@@ -97,14 +97,7 @@ const PLACES = [
     maps: "Sothavilai Beach, Kanyakumari, Tamil Nadu"
   }
 ];
-const BLOGS = [
-  ["Places", "Best Places to Visit Nearby", "A short list of sights worth your first day."],
-  ["Guide", "Travel Guide", "Getting here, getting around and what to pack."],
-  ["Activities", "Things to Do", "Morning walks, evening spots and rainy-day ideas."],
-  ["Food", "Local Food Guide", "Where to eat well and what to order."],
-  ["Family", "Family Travel Guide", "Easy plans for travelling with children."],
-  ["Tips", "Hotel & Travel Tips", "Small things that make a stay smoother."],
-].map((b, i) => ({ cat: b[0], title: b[1], text: b[2], img: `image/blog-${i + 1}.png`, date: "[DATE]" }));
+
 /* ================================================ */
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -292,10 +285,53 @@ $("#placeGrid").innerHTML = PLACES.map((p) => {
     </article>
   `;
 }).join("");
-$("#blogGrid").innerHTML = BLOGS.map((b) => `
-  <article class="tile"><div class="ph">${img(b.img, b.title)}</div><div class="bd">
-    <p class="meta">${b.cat} &middot; ${b.date}</p><h3>${b.title}</h3><p>${b.text}</p>
-    <div class="row"><a class="btn outline" href="#blog">Read More</a></div></div></article>`).join("");
+async function loadBlogsFromSupabase() {
+  const blogGrid = $("#blogGrid");
+
+  if (!blogGrid) return;
+
+  blogGrid.innerHTML = "<p>Loading articles...</p>";
+
+  const { data, error } = await supabaseClient
+    .from("blogs")
+    .select("*")
+    .eq("status", "published")
+    .order("published_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    blogGrid.innerHTML = "<p>Unable to load articles.</p>";
+    return;
+  }
+
+  if (!data.length) {
+    blogGrid.innerHTML = "<p>No articles published yet.</p>";
+    return;
+  }
+
+  blogGrid.innerHTML = data.map(blog => `
+    <article class="tile">
+      <div class="ph">
+        ${blog.featured_image
+          ? `<img src="${blog.featured_image}" alt="${blog.title}">`
+          : ""}
+      </div>
+      <div class="bd">
+        <p class="meta">${blog.category || "Travel"}</p>
+        <h3>${blog.title}</h3>
+        <p>${blog.excerpt || ""}</p>
+        <div class="row">
+          <a class="btn outline"
+             href="blog.html?slug=${encodeURIComponent(blog.slug)}">
+             Read More
+          </a>
+        </div>
+      </div>
+    </article>
+  `).join("");
+}
+
+loadBlogsFromSupabase();
 
 /* hide broken images so the gradient background shows until real photos are added */
 document.addEventListener("error", (e) => { if (e.target.tagName === "IMG") e.target.style.visibility = "hidden"; }, true);
