@@ -1,235 +1,330 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5efe3">
-  <title>TRB Residency | Room Price Admin</title>
-  <style>
-    :root{--bg:#f5efe3;--card:#fffdf8;--ink:#2b2621;--gold:#b4914a;--line:#e4d8c2;--muted:#74695d;--green:#16794b;--red:#b42318}
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-    header{background:#2b2621;color:#fff;padding:18px 16px}
-    .wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
-    header .wrap{padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-    h1{font-size:1.25rem;margin:0} h2{font-size:1.35rem;margin:0 0 8px}
-    .sub{color:#d9c9a8;font-size:.9rem;margin:2px 0 0}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0;box-shadow:0 6px 20px #2b26210a}
-    label{display:block;font-weight:650;margin:12px 0 6px}
-    input{width:100%;font:inherit;padding:12px;border:1px solid #cdbd9f;border-radius:9px;background:#fff}
-    button{font:inherit;font-weight:650;border:0;border-radius:9px;padding:12px 16px;background:var(--gold);color:white;cursor:pointer}
-    button:disabled{opacity:.55;cursor:wait}
-    .secondary{background:#2b2621}.danger{background:#62564b}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .row button{margin-top:14px}
-    .room{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
-    .room-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-    .room h3{margin:0;font-size:1.05rem}
-    .status{margin-top:14px;padding:11px 12px;border-radius:9px;background:#eee7da;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
-    .status.error{background:#fff0ef;color:var(--red)}.status.ok{background:#eaf7ef;color:var(--green)}
-    .muted{color:var(--muted);font-size:.9rem}
-    [hidden]{display:none!important}
-    .price-line{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:end}
-    .availability-line{display:grid;grid-template-columns:1fr 120px;gap:12px;align-items:end;margin-top:10px}
-    select{width:100%;font:inherit;padding:12px;border:1px solid #cdbd9f;border-radius:9px;background:#fff}
-    @media(max-width:480px){.card{padding:16px}.price-line,.availability-line{grid-template-columns:1fr 105px}.room-top{align-items:flex-start}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#211d19">
+<title>TRB Residency | Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#27221d;--muted:#82786d;--gold:#b4914a;--gold2:#d8bd83;--cream:#f6f2eb;--paper:#fffefa;--line:#e9e1d4;--green:#168451;--red:#b42318;--shadow:0 14px 40px rgba(39,34,29,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 "DM Sans",sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer} [hidden]{display:none!important}
+.layout{min-height:100vh;display:grid;grid-template-columns:260px 1fr}
+.sidebar{background:#211d19;color:#f8f3ea;padding:25px 18px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:12px;padding:5px 8px 28px;border-bottom:1px solid #40382f}
+.brand img{width:58px;height:58px;object-fit:contain;background:#fff;border-radius:12px;padding:5px}
+.brand strong{display:block;font:700 19px "Playfair Display",serif;letter-spacing:.3px}.brand small{color:#cbb995;font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+.nav-label{font-size:10px;letter-spacing:1.8px;color:#a99b87;margin:27px 10px 10px;text-transform:uppercase}
+.nav-btn{width:100%;border:0;background:transparent;color:#d7cfc3;text-align:left;padding:12px 13px;border-radius:10px;display:flex;align-items:center;gap:12px;margin:4px 0;font-weight:600;transition:.2s}
+.nav-btn .ico{width:22px;text-align:center;font-size:17px}.nav-btn:hover,.nav-btn.active{background:#3a3127;color:#fff}.nav-btn.active{box-shadow:inset 3px 0 var(--gold2)}
+.sidebar-bottom{margin-top:auto;border-top:1px solid #40382f;padding:17px 8px 0;color:#b9ad9c;font-size:12px}
+.main{min-width:0}.topbar{height:78px;background:rgba(255,254,250,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4.2%;position:sticky;top:0;z-index:10}
+.topbar .eyebrow{font-size:11px;color:var(--muted);letter-spacing:1.3px;text-transform:uppercase}.topbar h1{font:700 22px "Playfair Display",serif;margin:2px 0 0}
+.top-actions{display:flex;align-items:center;gap:12px}.admin-pill{border:1px solid var(--line);background:#fff;border-radius:30px;padding:8px 13px;font-size:12px;color:var(--muted)}
+.btn{border:0;border-radius:9px;padding:10px 15px;background:var(--gold);color:white;font-weight:700;transition:.2s}.btn:hover{filter:brightness(.94);transform:translateY(-1px)}.btn.dark{background:var(--ink)}.btn.light{background:#f0e8d9;color:var(--ink)}.btn.red{background:#a83a30}.btn.green{background:var(--green)}.btn:disabled{opacity:.55;cursor:wait;transform:none}
+.content{padding:32px 4.2% 55px;max-width:1500px;margin:auto}.welcome{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:25px}.welcome h2{font:700 clamp(25px,3vw,34px) "Playfair Display",serif;margin:0}.welcome p{margin:6px 0 0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0 26px}.stat{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:var(--shadow)}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}.stat-icon{width:38px;height:38px;border-radius:11px;background:#f2eadb;display:grid;place-items:center;font-size:18px}.stat strong{display:block;font-size:29px;margin-top:12px;letter-spacing:-1px}.stat small{color:var(--muted)}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:23px;box-shadow:var(--shadow);margin-bottom:20px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}.panel h3{font:700 20px "Playfair Display",serif;margin:0}.muted{color:var(--muted);font-size:13px}
+.room-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.room-card{border:1px solid var(--line);border-radius:13px;padding:17px;background:#fff}.room-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.room-card h4{margin:0;font-size:16px}.badge{font-size:11px;padding:5px 9px;border-radius:20px;background:#e8f5ed;color:#176b42;font-weight:700}.badge.off{background:#fcebea;color:#a52b24}
+.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;font-weight:700;color:#675d52}.field input,.field textarea,.field select{width:100%;border:1px solid #ded3c1;border-radius:9px;padding:11px 12px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #b4914a20}.price-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}.form-grid .wide{grid-column:1/-1}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.toolbar input{max-width:280px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}th{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}td{font-size:13px}.blog-title{font-weight:700}.thumb{width:62px;height:45px;object-fit:cover;border-radius:7px;background:#eee}
+.status{padding:12px 15px;border-radius:10px;margin:15px 0;background:#f1eadc;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}.status.ok{background:#e9f6ee;color:#176b42}.status.error{background:#fff0ef;color:#a52b24}
+.login-screen{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at top right,#e9ddc7,transparent 38%),var(--cream)}.login-card{width:min(430px,100%);background:#fffefa;border:1px solid var(--line);border-radius:20px;padding:34px;box-shadow:0 25px 70px #211d1920}.login-brand{text-align:center;margin-bottom:24px}.login-brand img{width:86px;height:86px;object-fit:contain;margin:0 auto 12px}.login-brand h1{font:700 25px "Playfair Display",serif;margin:0}.login-brand p{color:var(--muted);margin:4px 0}
+#statusGlobal{position:fixed;right:22px;bottom:22px;max-width:min(440px,calc(100vw - 44px));z-index:30;box-shadow:var(--shadow)}
+.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
+@media(max-width:1050px){.layout{grid-template-columns:220px 1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.layout{display:block}.sidebar{position:static;height:auto;padding:12px 14px}.brand{padding:0 5px 12px;border:0}.brand img{width:43px;height:43px}.brand strong{font-size:16px}.nav-label,.sidebar-bottom{display:none}.side-nav{display:flex;gap:5px;overflow-x:auto;padding-top:10px}.nav-btn{white-space:nowrap;width:auto;margin:0;padding:9px 12px;font-size:12px}.topbar{height:68px;padding:0 18px}.content{padding:23px 16px 40px}.welcome{align-items:flex-start;flex-direction:column}.stats{gap:10px}.stat{padding:15px}.stat strong{font-size:24px}.room-list{grid-template-columns:1fr}.panel{padding:17px}.topbar h1{font-size:19px}.admin-pill{display:none}}
+@media(max-width:430px){.stats{grid-template-columns:1fr 1fr}.stat-top{font-size:11px}.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}.top-actions .btn{padding:8px 10px;font-size:12px}}
+</style>
 </head>
 <body>
-<header><div class="wrap"><div><h1>TRB Residency</h1><p class="sub">Room price administration</p></div><button id="logoutBtn" class="danger" hidden>Log out</button></div></header>
-<main class="wrap">
-  <section class="card" id="loginPanel">
-    <h2>Admin login</h2>
-    <p class="muted">Sign in with the admin email/password created in Supabase.</p>
-    <form id="loginForm">
-      <label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required>
-      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
-      <div class="row"><button id="loginBtn" type="submit">Sign in</button></div>
-    </form>
-  </section>
 
-  <section class="card" id="adminPanel" hidden>
-    <h2>Room prices</h2>
-    <p class="muted">Edit the price and availability, then save each change. The public website reads from the same Supabase table.</p>
-    <div id="roomsList"></div>
-    <button id="refreshBtn" class="secondary" type="button">Refresh rooms</button>
-  </section>
-  <div id="status" class="status" role="status" aria-live="polite" hidden></div>
-  <p class="muted">Admin page. Keep this page private and never place a Supabase secret/service-role key in browser code.</p>
-</main>
+<section class="login-screen" id="loginPanel">
+  <div class="login-card">
+    <div class="login-brand">
+      <img src="image/logo-trb.png" alt="TRB Residency logo" onerror="this.style.display='none'">
+      <h1>TRB Residency</h1><p>Administration Portal</p>
+    </div>
+    <form id="loginForm">
+      <div class="field"><label for="email">ADMIN EMAIL</label><input id="email" type="email" autocomplete="username" required placeholder="Enter admin email"></div>
+      <div class="field"><label for="password">PASSWORD</label><input id="password" type="password" autocomplete="current-password" required placeholder="Enter password"></div>
+      <button class="btn" id="loginBtn" type="submit" style="width:100%;margin-top:8px">Sign in to dashboard</button>
+    </form>
+    <div id="loginStatus" class="status" hidden></div>
+    <p class="muted" style="text-align:center;margin:20px 0 0">Secure TRB Residency admin access</p>
+  </div>
+</section>
+
+<div class="layout" id="app" hidden>
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="image/logo-trb.png" alt="TRB Residency logo" onerror="this.style.display='none'">
+      <div><strong>TRB Residency</strong><small>Admin portal</small></div>
+    </div>
+    <div class="nav-label">Workspace</div>
+    <nav class="side-nav" aria-label="Admin navigation">
+      <button class="nav-btn active" data-view="dashboard"><span class="ico">▦</span>Dashboard</button>
+      <button class="nav-btn" data-view="prices"><span class="ico">₹</span>Price Management</button>
+      <button class="nav-btn" data-view="blogs"><span class="ico">✎</span>Blog Management</button>
+    </nav>
+    <div class="sidebar-bottom">TRB Residency · Management<br>Keep your hospitality running smoothly.</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">TRB RESIDENCY / ADMIN</div><h1 id="pageTitle">Dashboard</h1></div>
+      <div class="top-actions"><span class="admin-pill">● Administrator</span><button class="btn dark" id="logoutBtn">Log out</button></div>
+    </header>
+
+    <main class="content">
+      <section id="view-dashboard" class="view">
+        <div class="welcome"><div><h2>Welcome back</h2><p>Here is an overview of your residency website.</p></div><button class="btn light" id="dashboardRefresh">↻ Refresh overview</button></div>
+        <div class="stats">
+          <article class="stat"><div class="stat-top">Total rooms <span class="stat-icon">▤</span></div><strong id="statRooms">—</strong><small>Room records in database</small></article>
+          <article class="stat"><div class="stat-top">Total blogs <span class="stat-icon">▧</span></div><strong id="statBlogs">—</strong><small>All blog articles</small></article>
+          <article class="stat"><div class="stat-top">Published <span class="stat-icon">✓</span></div><strong id="statPublished">—</strong><small>Visible to website visitors</small></article>
+          <article class="stat"><div class="stat-top">Drafts <span class="stat-icon">✎</span></div><strong id="statDrafts">—</strong><small>Not publicly displayed</small></article>
+        </div>
+        <section class="panel"><div class="panel-head"><div><h3>Quick actions</h3><p class="muted">Go directly to the section you want to manage.</p></div></div>
+          <div class="toolbar"><button class="btn" data-goto="prices">Manage room prices</button><button class="btn dark" data-goto="blogs">Create or manage blogs</button></div>
+        </section>
+      </section>
+
+      <section id="view-prices" class="view" hidden>
+        <div class="welcome"><div><h2>Price Management</h2><p>Update room prices and availability. Changes are saved to your existing rooms table.</p></div><button class="btn light" id="refreshBtn">↻ Refresh rooms</button></div>
+        <div id="roomsList" class="room-list"></div>
+      </section>
+
+      <section id="view-blogs" class="view" hidden>
+        <div class="welcome"><div><h2>Blog Management</h2><p>Create travel articles and publish them on the TRB Residency website.</p></div><button class="btn" id="newBlogBtn">＋ Add new blog</button></div>
+        <section class="panel" id="blogEditor" hidden>
+          <div class="panel-head"><div><h3 id="editorHeading">Create blog article</h3><p class="muted">Add article details, cover image and search metadata.</p></div><button class="btn light" id="cancelBlogBtn" type="button">Close</button></div>
+          <form id="blogForm">
+            <input type="hidden" id="blogId">
+            <div class="form-grid">
+              <div class="field"><label for="blogTitle">BLOG TITLE *</label><input id="blogTitle" required maxlength="180" placeholder="e.g. Best Places to Visit in Kanyakumari"></div>
+              <div class="field"><label for="blogSlug">URL SLUG *</label><input id="blogSlug" required placeholder="best-places-to-visit-kanyakumari"></div>
+              <div class="field"><label for="blogCategory">CATEGORY</label><input id="blogCategory" placeholder="Travel Guide"></div>
+              <div class="field"><label for="blogAuthor">AUTHOR</label><input id="blogAuthor" placeholder="TRB Residency"></div>
+              <div class="field wide"><label for="blogExcerpt">SHORT DESCRIPTION</label><textarea id="blogExcerpt" rows="2" maxlength="300" placeholder="A short introduction shown on the blog cards."></textarea></div>
+              <div class="field wide"><label for="blogContent">ARTICLE CONTENT *</label><textarea id="blogContent" rows="12" required placeholder="Write your article here. You can use paragraphs and line breaks."></textarea></div>
+              <div class="field"><label for="blogImage">FEATURED IMAGE</label><input id="blogImage" type="file" accept="image/*"><small class="muted">Uploads to the Supabase Storage bucket named blog-images.</small></div>
+              <div class="field"><label for="blogStatus">PUBLICATION STATUS</label><select id="blogStatus"><option value="draft">Save as draft</option><option value="published">Publish article</option></select></div>
+              <div class="field"><label for="metaTitle">SEO TITLE</label><input id="metaTitle" maxlength="70" placeholder="Search result title"></div>
+              <div class="field"><label for="metaDescription">SEO META DESCRIPTION</label><input id="metaDescription" maxlength="160" placeholder="Short search description"></div>
+            </div>
+            <div class="toolbar"><button class="btn" id="saveBlogBtn" type="submit">Save blog</button><button class="btn light" id="resetBlogBtn" type="button">Clear form</button></div>
+          </form>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div><h3>All articles</h3><p class="muted">Edit, publish or remove your blog posts.</p></div><div class="toolbar"><input id="blogSearch" type="search" placeholder="Search articles..." aria-label="Search blogs"><select id="blogFilter" aria-label="Filter blogs"><option value="all">All statuses</option><option value="published">Published</option><option value="draft">Drafts</option></select></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Article</th><th>Category</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead><tbody id="blogsTable"><tr><td colspan="5">Loading articles…</td></tr></tbody></table></div>
+        </section>
+      </section>
+      <div id="statusGlobal" class="status" role="status" aria-live="polite" hidden></div>
+    </main>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // This is the public/publishable key. It is intended for browser use.
-  const SUPABASE_URL = "https://bnbeubivdpoewuiodpku.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zOnVkRxm6h0X9O3AEz_Xuw_hsIzi-Aj";
-  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+/* Existing TRB Residency Supabase project and publishable browser key. */
+const SUPABASE_URL = "https://bnbeubivdpoewuiodpku.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zOnVkRxm6h0X9O3AEz_Xuw_hsIzi-Aj";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const $ = id => document.getElementById(id);
+let blogCache = [];
 
-  const $ = (id) => document.getElementById(id);
-  const statusBox = $("status");
-  function setStatus(message, kind = "") {
-    statusBox.textContent = message;
-    statusBox.className = "status" + (kind ? " " + kind : "");
-    statusBox.hidden = false;
-  }
-  function clearStatus(){ statusBox.hidden = true; statusBox.textContent = ""; }
-  function showLoggedIn(isIn) {
-    $("loginPanel").hidden = isIn;
-    $("adminPanel").hidden = !isIn;
-    $("logoutBtn").hidden = !isIn;
-  }
-  const money = (n) => new Intl.NumberFormat("en-IN", {style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
+function notify(message, kind="") {
+  const box=$("statusGlobal"); box.textContent=message; box.className="status"+(kind?" "+kind:""); box.hidden=false;
+  clearTimeout(notify.timer); notify.timer=setTimeout(()=>box.hidden=true,5500);
+}
+function loginMessage(message,kind="") {
+  const box=$("loginStatus"); box.textContent=message; box.className="status"+(kind?" "+kind:""); box.hidden=false;
+}
+function escapeHTML(value="") {
+  return String(value).replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+const money = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(n)||0);
 
-  async function loadRooms() {
-    clearStatus();
-    $("roomsList").textContent = "Loading rooms…";
-    const {data, error} = await db.from("rooms").select("id,name,price,available").order("id");
-    if (error) {
-      $("roomsList").textContent = "";
-      setStatus("Could not load rooms: " + error.message + (error.code ? " (code " + error.code + ")" : ""), "error");
-      return;
-    }
-    if (!data || data.length === 0) {
-      $("roomsList").textContent = "No rooms found in public.rooms.";
-      return;
-    }
-    $("roomsList").innerHTML = "";
-    data.forEach((room) => {
-      const card = document.createElement("div");
-      card.className = "room";
-      const top = document.createElement("div");
-      top.className = "room-top";
-      const name = document.createElement("h3");
-      name.textContent = room.name;
-      const current = document.createElement("span");
-      current.className = "muted";
-      current.textContent = room.available ? "Available" : "Unavailable";
-      top.append(name, current);
-      const availabilityForm = document.createElement("form");
-      availabilityForm.className = "availability-line";
-      const availabilityField = document.createElement("div");
-      const availabilityLabel = document.createElement("label");
-      availabilityLabel.textContent = "Room status";
-      const availabilitySelect = document.createElement("select");
-      availabilitySelect.setAttribute("aria-label", room.name + " availability");
-      const availableOption = document.createElement("option");
-      availableOption.value = "true"; availableOption.textContent = "Available";
-      const unavailableOption = document.createElement("option");
-      unavailableOption.value = "false"; unavailableOption.textContent = "Not available";
-      availabilitySelect.append(availableOption, unavailableOption);
-      availabilitySelect.value = String(Boolean(room.available));
-      availabilityLabel.appendChild(availabilitySelect); availabilityField.appendChild(availabilityLabel);
-      const statusSave = document.createElement("button");
-      statusSave.type = "submit"; statusSave.textContent = "Save status";
-      availabilityForm.append(availabilityField, statusSave);
-      availabilityForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const available = availabilitySelect.value === "true";
-        statusSave.disabled = true; statusSave.textContent = "Saving…"; clearStatus();
-        try {
-          const {data: updatedRows, error: updateError} = await db
-            .from("rooms")
-            .update({available})
-            .eq("id", room.id)
-            .select("id, available");
+function showApp(isIn) { $("loginPanel").hidden=isIn; $("app").hidden=!isIn; }
+function showView(name) {
+  document.querySelectorAll(".view").forEach(v=>v.hidden=v.id!=="view-"+name);
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
+  $("pageTitle").textContent=({dashboard:"Dashboard",prices:"Price Management",blogs:"Blog Management"})[name];
+  if(name==="prices") loadRooms();
+  if(name==="blogs") loadBlogs();
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.view)));
+document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>showView(b.dataset.goto)));
 
-          if (updateError) {
-            setStatus("Could not update status for " + room.name + ": " + updateError.message +
-              (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
-            return;
-          }
-          if (!updatedRows || updatedRows.length === 0) {
-            setStatus("No database row was updated for " + room.name +
-              ". Check UPDATE permission and the rooms table RLS policy.", "error");
-            return;
-          }
-
-          room.available = updatedRows[0].available;
-          current.textContent = room.available ? "Available" : "Not available";
-          setStatus(room.name + " status saved successfully.", "ok");
-        } catch (err) {
-          setStatus("Unexpected status-save error: " + (err.message || err), "error");
-        } finally {
-          statusSave.disabled = false;
-          statusSave.textContent = "Save status";
-        }
-      });
-
-      const form = document.createElement("form");
-      form.className = "price-line";
-      const field = document.createElement("div");
-      const label = document.createElement("label");
-      label.textContent = "Price (₹)";
-      const input = document.createElement("input");
-      input.type = "number"; input.min = "0"; input.step = "1"; input.required = true;
-      input.inputMode = "numeric"; input.value = Number(room.price);
-      input.setAttribute("aria-label", room.name + " price in rupees");
-      label.appendChild(input); field.appendChild(label);
-      const save = document.createElement("button");
-      save.type = "submit"; save.textContent = "Save";
-      form.append(field, save);
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const price = Number(input.value);
-        if (!Number.isFinite(price) || price < 0 || !Number.isInteger(price)) {
-          setStatus("Enter a valid whole-number price (₹0 or more).", "error"); return;
-        }
-        save.disabled = true; save.textContent = "Saving…"; clearStatus();
-        try {
-          const {data: updatedRows, error: updateError} = await db
-            .from("rooms")
-            .update({price})
-            .eq("id", room.id)
-            .select("id, price");
-
-          if (updateError) {
-            setStatus("Could not save " + room.name + ": " + updateError.message +
-              (updateError.code ? " (code " + updateError.code + ")" : ""), "error");
-            return;
-          }
-          if (!updatedRows || updatedRows.length === 0) {
-            setStatus("No database row was updated for " + room.name +
-              ". Check UPDATE permission and the rooms table RLS policy.", "error");
-            return;
-          }
-
-          room.price = Number(updatedRows[0].price);
-          input.value = room.price;
-          setStatus(room.name + " price saved as " + money(room.price) + ".", "ok");
-          current.textContent = room.available
-            ? "Available · " + money(room.price)
-            : "Not available · " + money(room.price);
-        } catch (err) {
-          setStatus("Unexpected price-save error: " + (err.message || err), "error");
-        } finally {
-          save.disabled = false;
-          save.textContent = "Save";
-        }
-      });
-      card.append(top, form, availabilityForm);
-      $("roomsList").appendChild(card);
+async function loadRooms() {
+  $("roomsList").innerHTML='<div class="empty">Loading room records…</div>';
+  const {data,error}=await db.from("rooms").select("id,name,price,available").order("id");
+  if(error){$("roomsList").innerHTML='<div class="empty">Could not load rooms.</div>';notify("Could not load rooms: "+error.message,"error");return;}
+  $("statRooms").textContent=data?.length||0;
+  if(!data?.length){$("roomsList").innerHTML='<div class="empty">No rooms found in the rooms table.</div>';return;}
+  $("roomsList").innerHTML="";
+  data.forEach(room=>{
+    const card=document.createElement("article");card.className="room-card";
+    const top=document.createElement("div");top.className="room-top";
+    const title=document.createElement("h4");title.textContent=room.name;
+    const badge=document.createElement("span");badge.className="badge"+(room.available?"":" off");badge.textContent=room.available?"Available":"Unavailable";
+    top.append(title,badge);
+    const priceWrap=document.createElement("form");priceWrap.className="price-row";
+    const field=document.createElement("div");field.className="field";
+    const label=document.createElement("label");label.textContent="PRICE PER NIGHT (₹)";
+    const input=document.createElement("input");input.type="number";input.min="0";input.step="1";input.required=true;input.value=Number(room.price);label.append(input);field.append(label);
+    const save=document.createElement("button");save.className="btn";save.textContent="Save price";save.type="submit";priceWrap.append(field,save);
+    priceWrap.addEventListener("submit",async e=>{
+      e.preventDefault();const price=Number(input.value);
+      if(!Number.isInteger(price)||price<0){notify("Enter a valid whole-number price.","error");return;}
+      save.disabled=true;save.textContent="Saving…";
+      const {error}=await db.from("rooms").update({price}).eq("id",room.id);
+      save.disabled=false;save.textContent="Save price";
+      if(error){notify("Price update failed: "+error.message,"error");return;}
+      room.price=price;notify(room.name+" price updated to "+money(price)+".","ok");
     });
+    const availability=document.createElement("div");availability.className="field";
+    const alabel=document.createElement("label");alabel.textContent="ROOM AVAILABILITY";
+    const select=document.createElement("select");select.innerHTML='<option value="true">Available</option><option value="false">Not available</option>';select.value=String(Boolean(room.available));alabel.append(select);availability.append(alabel);
+    const saveStatus=document.createElement("button");saveStatus.className="btn light";saveStatus.textContent="Save availability";saveStatus.type="button";
+    saveStatus.addEventListener("click",async()=>{
+      const available=select.value==="true";saveStatus.disabled=true;
+      const {error}=await db.from("rooms").update({available}).eq("id",room.id);saveStatus.disabled=false;
+      if(error){notify("Availability update failed: "+error.message,"error");return;}
+      badge.textContent=available?"Available":"Unavailable";badge.className="badge"+(available?"":" off");notify(room.name+" availability updated.","ok");
+    });
+    const statusRow=document.createElement("div");statusRow.className="toolbar";statusRow.append(availability,saveStatus);
+    card.append(top,priceWrap,statusRow);$("roomsList").append(card);
+  });
+}
+$("refreshBtn").addEventListener("click",loadRooms);
+$("dashboardRefresh").addEventListener("click",refreshStats);
+
+async function refreshStats() {
+  const [rooms,blogs]=await Promise.all([
+    db.from("rooms").select("id",{count:"exact",head:true}),
+    db.from("blogs").select("id,status",{count:"exact"})
+  ]);
+  $("statRooms").textContent=rooms.error?"—":rooms.count??0;
+  if(blogs.error){$("statBlogs").textContent="—";$("statPublished").textContent="—";$("statDrafts").textContent="—";return;}
+  const rows=blogs.data||[];$("statBlogs").textContent=blogs.count??rows.length;
+  $("statPublished").textContent=rows.filter(b=>b.status==="published").length;
+  $("statDrafts").textContent=rows.filter(b=>b.status==="draft").length;
+}
+
+function slugify(text){return text.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g,"").trim().replace(/[\s_-]+/g,"-").replace(/^-+|-+$/g,"");}
+$("blogTitle").addEventListener("input",()=>{if(!$("blogId").value||!$("blogSlug").dataset.touched)$("blogSlug").value=slugify($("blogTitle").value);});
+$("blogSlug").addEventListener("input",()=>{$("blogSlug").dataset.touched="1";$("blogSlug").value=slugify($("blogSlug").value);});
+function resetBlogForm(){
+  $("blogForm").reset();$("blogId").value="";$("blogSlug").dataset.touched="";
+  $("editorHeading").textContent="Create blog article";$("saveBlogBtn").textContent="Save blog";
+}
+function openBlogEditor(blog=null){
+  resetBlogForm();$("blogEditor").hidden=false;
+  if(blog){
+    $("editorHeading").textContent="Edit blog article";$("saveBlogBtn").textContent="Update blog";
+    $("blogId").value=blog.id;$("blogTitle").value=blog.title||"";$("blogSlug").value=blog.slug||"";$("blogSlug").dataset.touched="1";
+    $("blogCategory").value=blog.category||"";$("blogAuthor").value=blog.author||"TRB Residency";
+    $("blogExcerpt").value=blog.excerpt||"";$("blogContent").value=blog.content||"";
+    $("blogStatus").value=blog.status||"draft";$("metaTitle").value=blog.meta_title||"";
+    $("metaDescription").value=blog.meta_description||"";$("blogEditor").scrollIntoView({behavior:"smooth",block:"start"});
+  }else $("blogEditor").scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("newBlogBtn").addEventListener("click",()=>openBlogEditor());
+$("cancelBlogBtn").addEventListener("click",()=>{$("blogEditor").hidden=true;resetBlogForm();});
+$("resetBlogBtn").addEventListener("click",resetBlogForm);
+
+async function uploadBlogImage(file){
+  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const path=Date.now()+"-"+Math.random().toString(36).slice(2,9)+"."+ext;
+  const {error}=await db.storage.from("blog-images").upload(path,file,{upsert:false,contentType:file.type});
+  if(error)throw error;
+  const {data}=db.storage.from("blog-images").getPublicUrl(path);
+  return data.publicUrl;
+}
+$("blogForm").addEventListener("submit",async e=>{
+  e.preventDefault();const save=$("saveBlogBtn");save.disabled=true;save.textContent="Saving…";
+  try{
+    const id=$("blogId").value||null;
+    const title=$("blogTitle").value.trim(),slug=slugify($("blogSlug").value);
+    if(!title||!slug)throw new Error("Blog title and URL slug are required.");
+    let imageUrl=blogCache.find(b=>String(b.id)===String(id))?.featured_image||"";
+    const file=$("blogImage").files[0];if(file)imageUrl=await uploadBlogImage(file);
+    const status=$("blogStatus").value;
+    const payload={
+      title,slug,category:$("blogCategory").value.trim(),author:$("blogAuthor").value.trim()||"TRB Residency",
+      excerpt:$("blogExcerpt").value.trim(),content:$("blogContent").value.trim(),featured_image:imageUrl,
+      meta_title:$("metaTitle").value.trim(),meta_description:$("metaDescription").value.trim(),
+      status,updated_at:new Date().toISOString(),published_at:status==="published"?(blogCache.find(b=>String(b.id)===String(id))?.published_at||new Date().toISOString()):null
+    };
+    let result;
+    if(id)result=await db.from("blogs").update(payload).eq("id",id);
+    else result=await db.from("blogs").insert(payload);
+    if(result.error)throw result.error;
+    notify(status==="published"?"Blog published successfully.":"Blog saved as draft.","ok");
+    $("blogEditor").hidden=true;resetBlogForm();await loadBlogs();await refreshStats();
+  }catch(err){notify("Could not save blog: "+err.message,"error");}
+  finally{save.disabled=false;save.textContent=$("blogId").value?"Update blog":"Save blog";}
+});
+
+async function loadBlogs(){
+  $("blogsTable").innerHTML='<tr><td colspan="5">Loading articles…</td></tr>';
+  const {data,error}=await db.from("blogs").select("*").order("updated_at",{ascending:false});
+  if(error){$("blogsTable").innerHTML='<tr><td colspan="5">Could not load blog articles.</td></tr>';notify("Blog table error: "+error.message,"error");return;}
+  blogCache=data||[];renderBlogs();await refreshStats();
+}
+function renderBlogs(){
+  const search=$("blogSearch").value.toLowerCase(),filter=$("blogFilter").value;
+  const rows=blogCache.filter(b=>(filter==="all"||b.status===filter)&&[b.title,b.category,b.slug].join(" ").toLowerCase().includes(search));
+  if(!rows.length){$("blogsTable").innerHTML='<tr><td colspan="5"><div class="empty">No matching blog articles.</div></td></tr>';return;}
+  $("blogsTable").innerHTML=rows.map(b=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:11px">${b.featured_image?`<img class="thumb" src="${escapeHTML(b.featured_image)}" alt="">`:'<div class="thumb"></div>'}<div><div class="blog-title">${escapeHTML(b.title)}</div><div class="muted">/${escapeHTML(b.slug)}</div></div></div></td>
+    <td>${escapeHTML(b.category||"—")}</td><td><span class="badge ${b.status==="published"?"":"off"}">${escapeHTML(b.status||"draft")}</span></td>
+    <td>${b.updated_at?new Date(b.updated_at).toLocaleDateString("en-IN"):"—"}</td>
+    <td><div class="toolbar"><button class="btn light" data-edit="${escapeHTML(b.id)}">Edit</button><button class="btn ${b.status==="published"?"light":"green"}" data-toggle="${escapeHTML(b.id)}">${b.status==="published"?"Unpublish":"Publish"}</button><button class="btn red" data-delete="${escapeHTML(b.id)}">Delete</button></div></td>
+  </tr>`).join("");
+}
+$("blogsTable").addEventListener("click",async e=>{
+  const edit=e.target.closest("[data-edit]"),toggle=e.target.closest("[data-toggle]"),del=e.target.closest("[data-delete]");
+  if(edit){const blog=blogCache.find(b=>String(b.id)===edit.dataset.edit);if(blog)openBlogEditor(blog);}
+  if(toggle){
+    const blog=blogCache.find(b=>String(b.id)===toggle.dataset.toggle);if(!blog)return;
+    const status=blog.status==="published"?"draft":"published";
+    const payload={status,updated_at:new Date().toISOString(),published_at:status==="published"?(blog.published_at||new Date().toISOString()):null};
+    const {error}=await db.from("blogs").update(payload).eq("id",blog.id);
+    if(error){notify("Could not change publication status: "+error.message,"error");return;}
+    notify("Blog status changed to "+status+".","ok");await loadBlogs();
   }
+  if(del){
+    const blog=blogCache.find(b=>String(b.id)===del.dataset.delete);if(!blog)return;
+    if(!confirm('Delete "'+blog.title+'"? This cannot be undone.'))return;
+    const {error}=await db.from("blogs").delete().eq("id",blog.id);
+    if(error){notify("Could not delete blog: "+error.message,"error");return;}
+    notify("Blog deleted.","ok");await loadBlogs();
+  }
+});
+$("blogSearch").addEventListener("input",renderBlogs);$("blogFilter").addEventListener("change",renderBlogs);
 
-  $("loginForm").addEventListener("submit", async (event) => {
-    event.preventDefault(); clearStatus();
-    $("loginBtn").disabled = true; $("loginBtn").textContent = "Signing in…";
-    const {error} = await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
-    $("loginBtn").disabled = false; $("loginBtn").textContent = "Sign in";
-    if (error) { setStatus("Login failed: " + error.message, "error"); return; }
-    showLoggedIn(true); await loadRooms();
-  });
-  $("logoutBtn").addEventListener("click", async () => {
-    await db.auth.signOut(); showLoggedIn(false); $("roomsList").textContent = ""; setStatus("You have logged out.");
-  });
-  $("refreshBtn").addEventListener("click", loadRooms);
-
-  (async function init(){
-    const {data:{session}, error} = await db.auth.getSession();
-    if (error) { setStatus("Could not check login: " + error.message, "error"); return; }
-    showLoggedIn(!!session);
-    if (session) await loadRooms();
-  })();
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();$("loginBtn").disabled=true;$("loginBtn").textContent="Signing in…";
+  const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+  $("loginBtn").disabled=false;$("loginBtn").textContent="Sign in to dashboard";
+  if(error){loginMessage("Login failed: "+error.message,"error");return;}
+  $("loginStatus").hidden=true;showApp(true);showView("dashboard");await refreshStats();
+});
+$("logoutBtn").addEventListener("click",async()=>{
+  await db.auth.signOut();showApp(false);$("password").value="";notify("You have logged out.");
+});
+(async()=>{
+  const {data,error}=await db.auth.getSession();
+  if(error){loginMessage("Could not check login: "+error.message,"error");return;}
+  if(data.session){showApp(true);showView("dashboard");await refreshStats();}
+})();
 </script>
 </body>
 </html>
