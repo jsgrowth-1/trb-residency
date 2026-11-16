@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5efe3">
+  <title>Travel Journal | TRB Residency</title>
+  <meta name="description" content="Travel stories, destination guides and useful tips from TRB Residency in Kanyakumari.">
+  <link rel="icon" href="image/logo-trb.png">
+  <style>
+    :root{
+      --bg:#f7f2e9;--paper:#fffdf8;--ink:#29231e;--muted:#796f63;
+      --gold:#b4914a;--gold-dark:#92743a;--line:#e7ddcc;
+      --shadow:0 16px 45px rgba(43,38,33,.09);--serif:Georgia,"Times New Roman",serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 Arial,Helvetica,sans-serif}
+    a{color:inherit}
+    .site-header{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:rgba(255,253,248,.96);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+    .brand img{width:52px;height:52px;object-fit:contain;display:block}
+    .nav{display:flex;align-items:center;gap:clamp(14px,2vw,28px)}
+    .nav a{text-decoration:none;font-size:13px;color:#453e36;transition:color .2s}
+    .nav a:hover,.nav a.active{color:var(--gold-dark)}
+    .nav .book{background:var(--gold);color:white;padding:11px 20px;border-radius:2px}
+    .menu-toggle{display:none;background:none;border:0;font-size:26px;color:var(--ink);cursor:pointer}
+    .page-intro{text-align:center;padding:68px 20px 35px}
+    .eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:10px;color:var(--gold-dark);font-weight:700}
+    h1,h2,h3{font-family:var(--serif);font-weight:400}
+    .page-intro h1{font-size:clamp(2.4rem,5vw,4rem);line-height:1.12;margin:12px 0}
+    .page-intro p{color:var(--muted);margin:0}
+    main{max-width:1060px;margin:0 auto;padding:0 24px 80px}
+    .state{background:var(--paper);border:1px solid var(--line);padding:24px;text-align:center;color:var(--muted)}
+    .article{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .hero-image{width:100%;max-height:570px;aspect-ratio:16/8;object-fit:cover;display:block;background:#e6dccb}
+    .article-inner{max-width:790px;margin:auto;padding:clamp(25px,6vw,66px) clamp(20px,5vw,56px) 55px}
+    .article-meta{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    .category{color:var(--gold-dark);font-weight:700}
+    .article-title{font-size:clamp(2.2rem,5vw,3.7rem);line-height:1.15;margin:18px 0 22px}
+    .excerpt{font-family:var(--serif);font-size:1.25rem;line-height:1.6;color:#665b4e;border-left:2px solid var(--gold);padding-left:20px;margin:0 0 34px}
+    .article-content{font-size:16px;line-height:1.95;color:#494139;overflow-wrap:anywhere}
+    .article-content p{margin:0 0 1.35em;white-space:pre-wrap}
+    .article-content h2,.article-content h3{color:var(--ink);line-height:1.3;margin:1.7em 0 .65em}
+    .article-content h2{font-size:1.8rem}.article-content h3{font-size:1.45rem}
+    .article-content img{max-width:100%;height:auto}
+    .article-content a{color:var(--gold-dark)}
+    .back-link{display:inline-block;margin-top:30px;text-decoration:none;color:var(--gold-dark);font-size:13px;border-bottom:1px solid var(--gold);padding-bottom:4px}
+    .related{margin-top:65px}
+    .related-head{text-align:center;margin-bottom:28px}
+    .related-head h2{font-size:2.2rem;margin:6px 0}
+    .related-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+    .related-card{background:var(--paper);border:1px solid var(--line);text-decoration:none;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s}
+    .related-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+    .related-card img,.related-placeholder{width:100%;aspect-ratio:3/2;object-fit:cover;background:#e6dccb}
+    .related-card .card-body{padding:17px}
+    .related-card .card-category{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-dark)}
+    .related-card h3{font-size:1.25rem;line-height:1.3;margin:7px 0}
+    .related-card p{font-size:13px;color:var(--muted);margin:0}
+    footer{background:#29231e;color:#e8dfd0;text-align:center;padding:28px 20px;font-size:12px}
+    footer a{color:#e8d1a0;text-decoration:none}
+    @media(max-width:760px){
+      .site-header{height:68px;padding:0 5vw}.brand img{width:46px;height:46px}
+      .menu-toggle{display:block}
+      .nav{display:none;position:absolute;top:68px;left:0;right:0;background:var(--paper);padding:18px 5vw 24px;border-bottom:1px solid var(--line);box-shadow:var(--shadow);flex-direction:column;align-items:stretch;gap:0}
+      .nav.open{display:flex}.nav a{padding:11px 0;border-bottom:1px solid var(--line)}.nav .book{text-align:center;margin-top:12px;padding:12px}
+      .page-intro{padding:48px 18px 25px}main{padding:0 14px 55px}
+      .hero-image{aspect-ratio:4/3;max-height:390px}
+      .related-grid{grid-template-columns:1fr 1fr;gap:12px}
+      .related-card .card-body{padding:12px}.related-card h3{font-size:1.08rem}
+    }
+    @media(max-width:460px){.related-grid{grid-template-columns:1fr}.article-meta{font-size:10px}.article-content{font-size:15px}}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="TRB Residency home"><img src="image/logo-trb.png" alt="TRB Residency"></a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <nav class="nav" id="siteNav" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#rooms">Rooms</a>
+      <a href="index.html#book">Book Now</a>
+      <a href="index.html#places">Tourist Places</a>
+      <a class="active" href="blog.html">Blog</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="admin.html">Admin</a>
+      <a class="book" href="index.html#book">Book Now</a>
+    </nav>
+  </header>
+
+  <section class="page-intro">
+    <div class="eyebrow">TRB Residency · Kanyakumari</div>
+    <h1>Travel Journal</h1>
+    <p>Stories, local discoveries and thoughtful tips for your journey.</p>
+  </section>
+
+  <main>
+    <div id="pageState" class="state" role="status">Loading article...</div>
+    <article id="article" class="article" hidden>
+      <img id="featuredImage" class="hero-image" alt="" hidden>
+      <div class="article-inner">
+        <div class="article-meta">
+          <span id="articleCategory" class="category"></span>
+          <span id="articleDate"></span>
+          <span id="articleAuthor"></span>
+        </div>
+        <h1 id="articleTitle" class="article-title"></h1>
+        <p id="articleExcerpt" class="excerpt" hidden></p>
+        <div id="articleContent" class="article-content"></div>
+        <a class="back-link" href="index.html#blog">← Back to Travel Journal</a>
+      </div>
+    </article>
+
+    <section id="relatedSection" class="related" hidden>
+      <div class="related-head">
+        <div class="eyebrow">Keep exploring</div>
+        <h2>Related articles</h2>
+      </div>
+      <div id="relatedGrid" class="related-grid"></div>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> TRB Residency · Kanyakumari · <a href="index.html">Visit our website</a></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://bnbeubivdpoewuiodpku.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zOnVkRxm6h0X9O3AEz_Xuw_hsIzi-Aj";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const $ = (id) => document.getElementById(id);
+    $("year").textContent = new Date().getFullYear();
+
+    $("menuToggle").addEventListener("click", () => {
+      const open = $("siteNav").classList.toggle("open");
+      $("menuToggle").setAttribute("aria-expanded", String(open));
+      $("menuToggle").textContent = open ? "×" : "☰";
+    });
+
+    function escapeHTML(value = "") {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+      }[char]));
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-IN", {
+        day:"numeric", month:"long", year:"numeric"
+      });
+    }
+
+    function renderArticleText(value = "") {
+      // The current admin editor stores plain text. Escape it and preserve line breaks.
+      return String(value).split(/\n{2,}/).map((paragraph) =>
+        `<p>${escapeHTML(paragraph).replace(/\n/g, "<br>")}</p>`
+      ).join("");
+    }
+
+    function setPageState(message) {
+      $("pageState").textContent = message;
+      $("pageState").hidden = false;
+      $("article").hidden = true;
+    }
+
+    async function loadArticle() {
+      const slug = new URLSearchParams(window.location.search).get("slug");
+      if (!slug) {
+        setPageState("No article was selected. Please return to the Travel Journal and choose an article.");
+        return;
+      }
+
+      try {
+        const { data: blog, error } = await supabaseClient
+          .from("blogs")
+          .select("id,title,slug,category,author,excerpt,content,featured_image,meta_title,meta_description,status,published_at,created_at")
+          .eq("slug", slug)
+          .eq("status", "published")
+          .maybeSingle();
+
+        if (error) throw error;
+        if (!blog) {
+          setPageState("This article could not be found, or it is not published.");
+          return;
+        }
+
+        const title = blog.meta_title || blog.title || "Travel Journal | TRB Residency";
+        const description = blog.meta_description || blog.excerpt || "Travel stories from TRB Residency, Kanyakumari.";
+        document.title = `${title} | TRB Residency`;
+        let descriptionTag = document.querySelector('meta[name="description"]');
+        descriptionTag.setAttribute("content", description);
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+          canonical = document.createElement("link");
+          canonical.rel = "canonical";
+          document.head.appendChild(canonical);
+        }
+        canonical.href = window.location.href;
+
+        $("articleTitle").textContent = blog.title || "";
+        $("articleCategory").textContent = blog.category || "Travel";
+        $("articleDate").textContent = formatDate(blog.published_at || blog.created_at);
+        $("articleAuthor").textContent = blog.author ? `By ${blog.author}` : "";
+        $("articleExcerpt").textContent = blog.excerpt || "";
+        $("articleExcerpt").hidden = !blog.excerpt;
+        $("articleContent").innerHTML = renderArticleText(blog.content || "");
+
+        if (blog.featured_image) {
+          $("featuredImage").src = blog.featured_image;
+          $("featuredImage").alt = blog.title || "Article featured image";
+          $("featuredImage").hidden = false;
+        }
+
+        $("pageState").hidden = true;
+        $("article").hidden = false;
+        await loadRelated(blog.id, blog.category);
+      } catch (error) {
+        console.error("Unable to load article:", error);
+        setPageState("Unable to load this article right now. Please refresh the page.");
+      }
+    }
+
+    async function loadRelated(currentId, category) {
+      try {
+        let query = supabaseClient
+          .from("blogs")
+          .select("id,title,slug,category,excerpt,featured_image,published_at,created_at")
+          .eq("status", "published")
+          .neq("id", currentId)
+          .order("published_at", { ascending: false, nullsFirst: false })
+          .limit(3);
+
+        const { data, error } = await query;
+        if (error) throw error;
+        if (!data || data.length === 0) return;
+
+        // Prefer the same category, then fill remaining slots with recent articles.
+        const sameCategory = category
+          ? data.filter((item) => item.category === category)
+          : [];
+        const selected = [...sameCategory, ...data.filter((item) => !sameCategory.includes(item))].slice(0, 3);
+
+        $("relatedGrid").innerHTML = selected.map((item) => {
+          const image = item.featured_image
+            ? `<img src="${escapeHTML(item.featured_image)}" alt="${escapeHTML(item.title)}" loading="lazy">`
+            : `<div class="related-placeholder" aria-hidden="true"></div>`;
+          return `
+            <a class="related-card" href="blog.html?slug=${encodeURIComponent(item.slug)}">
+              ${image}
+              <div class="card-body">
+                <span class="card-category">${escapeHTML(item.category || "Travel")}</span>
+                <h3>${escapeHTML(item.title)}</h3>
+                <p>${escapeHTML(item.excerpt || "")}</p>
+              </div>
+            </a>`;
+        }).join("");
+        $("relatedSection").hidden = false;
+      } catch (error) {
+        console.warn("Related articles could not be loaded:", error);
+      }
+    }
+
+    loadArticle();
+  </script>
+</body>
+</html>
